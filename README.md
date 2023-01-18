@@ -13,7 +13,7 @@ Selectively block page elements with a single click (Chrome only)
 ## Usage
 | Remove Element  | Undo Removal | Reset Page |
 |-----------------|--------------|------------|
-| <kbd>ALT</kbd> + **Left Click** | <kbd>ALT</kbd> + **Right Click** | <kbd>CTRL</kbd> + <kbd>ALT</kbd> + **Right Click** |
+| <kbd>ALT</kbd> + **Left Click** (while hovering mouse over element) | <kbd>ALT</kbd> + **Right Click** | <kbd>CTRL</kbd> + <kbd>ALT</kbd> + **Right Click** |
 
   ## Upcoming changes
   1. Domain-level element removal
