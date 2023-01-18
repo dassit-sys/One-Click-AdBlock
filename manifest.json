@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Mirage",
+  "version": "1.0",
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["content.js"]
+    }
+  ]
+}
