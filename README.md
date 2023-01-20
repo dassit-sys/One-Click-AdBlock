@@ -12,10 +12,12 @@ Selectively block page elements with a single click (Chrome only)
 
 ## Usage
 |                 | Remove Element  | Undo Removal | Undo All |
-|-----------------|-----------------|--------------|------------|
+| :-: | :-: | :-: | :-: |
 | Current Page Only | <kbd>ALT</kbd> + **Left Click** (while hovering mouse over element) | <kbd>ALT</kbd> + **Right Click** | <kbd>CTRL</kbd> + <kbd>ALT</kbd> + **Right Click** |
 | Domain-Wide | <kbd>SHIFT</kbd> + <kbd>ALT</kbd> + **Left Click** (while hovering mouse over element) | <kbd>SHIFT</kbd> + <kbd>ALT</kbd> + **Right Click** | <kbd>SHIFT</kbd> + <kbd>CTRL</kbd> + <kbd>ALT</kbd> + **Right Click** |
 
 ## Changelog
 
-- 1.1 - Added domain-wide element blocking, reorganized code
+| Version | Changes | Date |
+| :-: | :-: | :-: |
+| 1.1 | Added domain-wide blocking, reorganized code | 1-20-2023 |
