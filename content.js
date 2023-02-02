@@ -1,5 +1,22 @@
 function checkStorage(key) {
-	const storedElements = JSON.parse(localStorage.getItem(document.URL));					//Check local storage for current site
+	//Apply domain filters
+	const domainStoredElements = JSON.parse(localStorage.getItem(Location.hostname));			//Check local storage for current domain's list
+
+	if (domainStoredElements != null) {
+		for (let a = 0; a < domainStoredElements.length; a++) {
+			var shelfArray = domainStoredElements[a];
+			var possibleMatches = document.getElementsByTagName(shelfArray[0]);			//Grab page elements w/ matching HTML tag name
+		
+			for (let b = 0; b < possibleMatches.length; b++) {
+				if (possibleMatches[b].innerHTML == shelfArray[1]) {				//Iterate them, checking for an innerHTML match
+					possibleMatches[b].style.display = "none";				//Hide matches
+				}
+			}
+		}
+	}
+
+	//Apply page filters
+	const storedElements = JSON.parse(localStorage.getItem(document.URL));					//Check local storage for current page's list
 
 	if (storedElements != null) {
 		for (let x = 0; x < storedElements.length; x++) {
@@ -17,62 +34,100 @@ function checkStorage(key) {
 
 checkStorage(document.URL);
 
-function checkIfNew(site) {											//Checks if a site is in local storage already
-	if (site === null) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function saveChanges(newSite, aim, blockedElements) {
-	if (newSite) { 												//Remember if new
-		var newBlockedElements = new Array(); 								//Create list for a new site
-		var newShelfArray = new Array();
-		newShelfArray.push(aim.tagName, aim.innerHTML);
-		newBlockedElements.push(newShelfArray);
-		localStorage.setItem(document.URL, JSON.stringify(newBlockedElements));	 			//Add new list to local storage
-	} else { 												//Add to existing list if old
-		if (!blockedElements.includes(aim.innerHTML)) { 						//Prevent duplicates
-			var newShelfArray2 = new Array(aim.tagName, aim.innerHTML);
-			blockedElements.push(newShelfArray2);
-			localStorage.setItem(document.URL, JSON.stringify(blockedElements));			//Add updated list to local storage
-		}
-	}
-}
-
 document.addEventListener('mousedown', function(e) {								//Left click + ALT event listener - Removes element
 	if (e.button == 0 && event.altKey) {
 		window.stop();
-		e.preventDefault(); 										//Prevent default click action
+		e.preventDefault();										//Prevent default click action
 		let aim = document.elementFromPoint(e.clientX, e.clientY); 					//Grab selected element
 		aim.style.display = "none"; 									//Hide it
+		const blockedElements = JSON.parse(localStorage.getItem(document.URL));				//Grab page list from local storage
 
-		const blockedElements = JSON.parse(localStorage.getItem(document.URL));				//Grab site from local storage
-		var newSite = checkIfNew(blockedElements);							//Check if new site
-		
-		saveChanges(newSite, aim, blockedElements);
+		if (event.shiftKey) {										//Check if domain level
+			alert("SHIFT + ALT + Left Click");
+			if (blockedElements == null) { 								//If new domain
+				var newShelfArray = new Array(aim.tagName, aim.innerHTML);
+				var newBlockedElements = new Array(newShelfArray);				//Create list if it doesn't exist in local storage
+				saveList(newBlockedElements, true);
+			} else {
+				if (!blockedElements.includes(aim.innerHTML)) {
+					var newShelfArray2 = new Array(aim.tagName, aim.innerHTML);
+					blockedElements.push(newShelfArray2);
+					saveList(blockedElements, true);					//Update existing domain list
+				}
+			}
+		} else {
+			alert("ALT + Left Click");
+			if (blockedElements == null) {								//If new page
+				var newShelfArray = new Array(aim.tagName, aim.innerHTML);
+				var newBlockedElements = new Array(newShelfArray);				//Create list if it doesn't exist in local storage
+				saveList(newBlockedElements, false);
+			} else {
+				if (!blockedElements.includes(aim.innerHTML)) {
+					var newShelfArray2 = new Array(aim.tagName, aim.innerHTML);
+					blockedElements.push(newShelfArray2);
+					saveList(blockedElements, false);					//Update existing page list
+				}
+			}
+		}
 	}
 });
 
+function saveList(blockedElementsList, isDomainLevel) {
+	if (isDomainLevel) {
+		localStorage.setItem(Location.hostname, JSON.stringify(blockedElementsList));			//Add new domain list to local storage
+	} else {
+		localStorage.setItem(document.URL, JSON.stringify(blockedElementsList));			//Add new page list to local storage
+	}
+}
+
+function deleteList(isDomainLevel) {
+	if (isDomainLevel) {
+		localStorage.removeItem(Location.hostname);							//Delete domain list
+	} else {
+		localStorage.removeItem(document.URL);								//Delete page list
+	}
+}
+
 document.addEventListener('mousedown', function(b) {								//Right click + ALT event listener - Undoes last removal
-	if (b.button == 2 && event.altKey) {
-		const storedElements = JSON.parse(localStorage.getItem(document.URL));				//Grab site's entry from local storage
-		if (storedElements != null && storedElements.length > 0) {
-			storedElements.pop();									//Remove the last entry
-		}
-		if (storedElements.length == 0) {
-			localStorage.removeItem(document.URL);							//Remove site entry entirely if empty
+	if (b.button == 2 && event.altKey && !event.ctrlKey) {
+		if (event.shiftKey) {
+			alert("SHIFT + ALT + Right Click");
+			const storedElements = JSON.parse(localStorage.getItem(Location.hostname));		//Grab domain's entry from local storage
+			if (storedElements != null) {
+				if (storedElements.length > 0) {
+					storedElements.pop();							//Remove the last entry
+					saveList(storedElements, true);						//Add updated list to local storage
+					location.reload();							//Reload page to reflect changes
+				} else {
+					deleteList(true);							//Remove domain entry entirely if empty
+				}
+			}
 		} else {
-			localStorage.setItem(document.URL, JSON.stringify(storedElements));			//Add updated list to local storage
+			alert("ALT + Right Click");
+			const storedElements = JSON.parse(localStorage.getItem(document.URL));			//Grab page's entry from local storage
+			if (storedElements != null) {
+				if (storedElements.length > 0) {
+					storedElements.pop();							//Remove the last entry
+					saveList(storedElements, false);					//Add updated list to local storage
+					location.reload();							//Reload page to reflect changes
+				} else {
+					deleteList(false);							//Remove page entry entirely if empty
+				}
+			}
 		}
-		location.reload();										//Reload page to reflect changes
 	}
 });
 
 document.addEventListener('mousedown', function(a) {								//Right Click + ALT + CTRL event listener - Resets page
 	if (a.button == 2 && event.altKey && event.ctrlKey) {
-		localStorage.removeItem(document.URL);								//Clear site's local storage entry
-		location.reload();										//Reload page to reflect changes
+		if (event.shiftKey) {
+			alert("SHIFT + ALT + CTRL + Right Click");
+			deleteList(true);									//Clear domain's local storage entry
+			location.reload();									//Reload page to reflect changes
+		} else {
+			alert("ALT + CTRL + Right Click");
+			deleteList(false);									//Clear page's local storage entry
+			location.reload();									//Reload page to reflect changes
+		}
 	}
 });
