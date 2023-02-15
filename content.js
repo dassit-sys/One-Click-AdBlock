@@ -22,7 +22,6 @@ function checkStorage(key) {
 		for (let x = 0; x < storedElements.length; x++) {
 			var shelfArray = storedElements[x];
 			var possibleMatches = document.getElementsByTagName(shelfArray[0]);			//Grab page elements w/ matching HTML tag name
-		
 			for (let y = 0; y < possibleMatches.length; y++) {
 				if (possibleMatches[y].innerHTML == shelfArray[1]) {				//Iterate them, checking for an innerHTML match
 					possibleMatches[y].style.display = "none";				//Hide matches
@@ -43,7 +42,6 @@ document.addEventListener('mousedown', function(e) {								//Left click + ALT e
 		const blockedElements = JSON.parse(localStorage.getItem(document.URL));				//Grab page list from local storage
 
 		if (event.shiftKey) {										//Check if domain level
-			alert("SHIFT + ALT + Left Click");
 			if (blockedElements == null) { 								//If new domain
 				var newShelfArray = new Array(aim.tagName, aim.innerHTML);
 				var newBlockedElements = new Array(newShelfArray);				//Create list if it doesn't exist in local storage
@@ -56,7 +54,6 @@ document.addEventListener('mousedown', function(e) {								//Left click + ALT e
 				}
 			}
 		} else {
-			alert("ALT + Left Click");
 			if (blockedElements == null) {								//If new page
 				var newShelfArray = new Array(aim.tagName, aim.innerHTML);
 				var newBlockedElements = new Array(newShelfArray);				//Create list if it doesn't exist in local storage
@@ -91,7 +88,6 @@ function deleteList(isDomainLevel) {
 document.addEventListener('mousedown', function(b) {								//Right click + ALT event listener - Undoes last removal
 	if (b.button == 2 && event.altKey && !event.ctrlKey) {
 		if (event.shiftKey) {
-			alert("SHIFT + ALT + Right Click");
 			const storedElements = JSON.parse(localStorage.getItem(Location.hostname));		//Grab domain's entry from local storage
 			if (storedElements != null) {
 				if (storedElements.length > 0) {
@@ -103,7 +99,6 @@ document.addEventListener('mousedown', function(b) {								//Right click + ALT 
 				}
 			}
 		} else {
-			alert("ALT + Right Click");
 			const storedElements = JSON.parse(localStorage.getItem(document.URL));			//Grab page's entry from local storage
 			if (storedElements != null) {
 				if (storedElements.length > 0) {
@@ -121,11 +116,9 @@ document.addEventListener('mousedown', function(b) {								//Right click + ALT 
 document.addEventListener('mousedown', function(a) {								//Right Click + ALT + CTRL event listener - Resets page
 	if (a.button == 2 && event.altKey && event.ctrlKey) {
 		if (event.shiftKey) {
-			alert("SHIFT + ALT + CTRL + Right Click");
 			deleteList(true);									//Clear domain's local storage entry
 			location.reload();									//Reload page to reflect changes
 		} else {
-			alert("ALT + CTRL + Right Click");
 			deleteList(false);									//Clear page's local storage entry
 			location.reload();									//Reload page to reflect changes
 		}
